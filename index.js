@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 import { main } from './main.js';
-import { models } from './models.js';
+import { listModels, models } from './models.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,7 +17,7 @@ const version = JSON.parse(packageText).version;
 const providers = Object.keys(models);
 let selectedProvider = providers[0]; // Default provider
 
-const DEFAULT_SYSTEM_PROMPT = "Complete the text to the best of your abilities without any additional information. If text is not complete or incoherent, just complete it.";
+const DEFAULT_SYSTEM_PROMPT = "You are an assistant. Use the context to provide a helpful response.";
 
 const program = new Command();
 
@@ -48,6 +48,10 @@ program
   .option('-d, --delay <ms>', 'the delay between typing chunks', (value) => {
     return parseInt(value, 10);
   }, 5)
+  .option('-l, --list', 'list all available models', () => {
+    listModels();
+    process.exit();
+  })
   .option('-v, --verbose', 'display debug logs', () => {
     return true;
   }, false)

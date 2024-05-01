@@ -10,7 +10,10 @@ export const models = {
     'gpt-4-32k',
   ],
   groq: [
-    'mixtral-8x7b-32768'
+    'llama3-70b-8192',
+    'llama3-8b-8192',
+    'mixtral-8x7b-32768',
+    'gemma-7b-it'
   ],
   mistral: [
     "open-mistral-7b",
@@ -29,6 +32,22 @@ export const models = {
     'codellama-34b-instruct',
     'codellama-70b-instruct',
   ],
-  together: ['mistralai/Mixtral-8x7B-Instruct-v0.1'],
+  together: [
+    'meta-llama/Llama-3-70b-chat-hf',
+    'meta-llama/Llama-3-8b-chat-hf',
+    'mistralai/Mixtral-8x7B-Instruct-v0.1'
+  ],
   ollama: ['llama3'],
+}
+
+
+export const listModels = () => {
+  // log all providers and models
+  for (const provider in models) {
+    console.log(`${provider.toUpperCase()}`);
+    models[provider].forEach((model) => {
+      console.log(`- ${model}`);
+    });
+    console.log();
+  }
 }

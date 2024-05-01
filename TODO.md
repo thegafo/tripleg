@@ -1,7 +1,6 @@
 # TODO
 
 - Improve README
-- Add to Github
 - UX ideas / improvements
 - More providers
 - Ability to change trigger
