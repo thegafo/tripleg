@@ -4,6 +4,10 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thegafo/tripleg"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
