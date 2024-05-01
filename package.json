@@ -1,0 +1,26 @@
+{
+  "name": "tripleg",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "tripleg": "./index.js"
+  },
+  "keywords": [
+    "yo momma"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "clipboardy": "^4.0.0",
+    "commander": "^12.0.0",
+    "node-global-key-listener": "^0.1.1",
+    "openai": "^4.28.0",
+    "robotjs": "^0.6.0"
+  }
+}
