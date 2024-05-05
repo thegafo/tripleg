@@ -2,6 +2,8 @@
 
 Triple G is an experimental AI completion tool designed to enhance productivity by listening to keypresses and clipboard changes. It integrates AI-powered completions into any text environment, whether you're coding, writing documentation, or composing emails. Use Triple G to streamline your workflow and enhance your text interaction capabilities with AI.
 
+Type `ggg` to trigger an AI completion at your cursor location, and `GGG` to clear the internal context stack.
+
 ## Key Features
 
 - **Auto Context**: Listens to keypresses and clipboard changes to automatically set context.

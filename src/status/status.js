@@ -11,9 +11,10 @@ export function status() {
     exec(`xcrun swiftc -o ${__dirname}/Status ${__dirname}/Status.swift -framework Cocoa`, (error, stdout, stderr) => {
       if (error) return;
 
-      exec(`${__dirname}/Status`, (error, stdout, stderr) => {
+      const child = exec(`${__dirname}/Status`, (error, stdout, stderr) => {
         if (error) return;
       });
+      process.on('exit', () => child.kill()); // catch exit and kill the child process
     });
   } catch { }
 }

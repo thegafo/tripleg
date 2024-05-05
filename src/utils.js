@@ -69,7 +69,7 @@ export const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 export const getConfig = (provider) => {
   if (provider === 'together') {
     return {
-      apiKey: process.env.TOGETHERAI_API_KEY,
+      apiKey: process.env.TOGETHER_API_KEY,
       baseURL: "https://api.together.xyz/v1",
     }
   } else if (provider === 'perplexity') {

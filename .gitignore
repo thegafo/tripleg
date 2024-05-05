@@ -3,3 +3,4 @@ node_modules/
 *.html
 whisper/
 src/status/Status
+*.ts
