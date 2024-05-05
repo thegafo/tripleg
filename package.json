@@ -1,6 +1,6 @@
 {
   "name": "tripleg",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -23,6 +23,7 @@
   "license": "ISC",
   "dependencies": {
     "chalk": "^4.1.2",
+    "chokidar": "^3.6.0",
     "clipboardy": "^4.0.0",
     "commander": "^12.0.0",
     "node-global-key-listener": "^0.1.1",

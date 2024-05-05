@@ -52,6 +52,15 @@ program
     listModels();
     process.exit();
   })
+  .option('-o, --ocr <directory>', 'specify the directory for OCR', (value) => {
+    if (value) {
+      if (!fs.existsSync(value)) {
+        console.log(chalk.red(`The directory ${value} does not exist.`));
+        process.exit();
+      }
+      return value;
+    }
+  }, undefined)
   .option('-v, --verbose', 'display debug logs', () => {
     return true;
   }, false)
@@ -73,6 +82,7 @@ program
       systemPrompt: options.systemPrompt,
       typeDelay: options.delay,
       verbose: options.verbose,
+      ocrDirectory: options.ocr,
     });
   });
 

@@ -38,6 +38,8 @@ tripleg --provider openai -m gpt-3.5-turbo
 - `-sp, --system-prompt <prompt>`: Set a system guidance prompt.
 - `-d, --delay <ms>`: Set the delay between typing chunks.
 - `-l, --list`: List all available model options.
+- `-o, --ocr <directory`: Perform OCR on images in the specified directory.
+- `-h, --help`: Display the help information.
 - `-v, --verbose`: Display debug logs.
 - `-V, --version`: Output the version information.
 

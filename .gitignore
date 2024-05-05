@@ -3,6 +3,5 @@ node_modules/
 *.html
 whisper/
 src/status/Status
-ocr/
 src/ocr/OCR
 *.ts

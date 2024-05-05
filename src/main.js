@@ -5,11 +5,20 @@ import { chat, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
 import { monitorClipboard } from "./clipboard.js";
 import { status } from "./status/status.js";
+import { watch } from "./watch.js";
+import { ocr } from "./ocr/ocr.js";
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
 
-export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbose = false }) => {
+export const main = async ({
+  provider,
+  model,
+  systemPrompt,
+  typeDelay = 5,
+  verbose = false,
+  ocrDirectory = undefined,
+}) => {
   let stack = "";
   let ignore = false;
   let cancel = false;
@@ -17,7 +26,7 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
 
   const handleKey = async (key) => {
     // Cancel current completion if user presses escape
-    if (key === 'ESCAPE') {
+    if (key === "ESCAPE") {
       if (isProcessing) {
         cancel = true;
       }
@@ -47,13 +56,17 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
         stack = "";
         ignore = true;
 
-
         // Remove trigger text
         await backspace(3);
 
         status(PROCESS_STATUS_ICON);
 
-        const { stream, killStream } = await chat(systemPrompt, message || ' ', provider, model);
+        const { stream, killStream } = await chat(
+          systemPrompt,
+          message || " ",
+          provider,
+          model
+        );
         let queueIsProcessing = false;
         let result = "";
         let queue = [];
@@ -68,10 +81,10 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
           while (queue.length > 0) {
             if (cancel) {
               if (verbose) {
-                console.log('\nCancelling');
+                console.log("\nCancelling");
               }
               killStream();
-              queue = ['<<<done>>>'];
+              queue = ["<<<done>>>"];
             }
             const data = queue.shift();
             if (data === "<<<done>>>") {
@@ -104,9 +117,9 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
         });
         stream.on("close", async () => {
           if (verbose) {
-            console.log('\nstream closed');
+            console.log("\nstream closed");
           }
-          queue.push('<<<done>>>');
+          queue.push("<<<done>>>");
           await processQueue();
         });
       }
@@ -122,7 +135,7 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
         ignore = false;
         resetChat();
         if (verbose) {
-          console.log('Chat reset');
+          console.log("Chat reset");
         }
       }
 
@@ -133,7 +146,7 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
         // Remove trigger text
         await backspace(3);
         await sleep(100);
-        await type('Goodbye!');
+        await type("Goodbye!");
         await sleep(100);
         process.exit();
       }
@@ -149,7 +162,6 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
         stack = "";
         ignore = false;
       }
-
     }
   };
 
@@ -169,8 +181,8 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
         handleKey("\n");
       } else if (key === "BACKSPACE") {
         handleKey("\b");
-      } else if (key === 'ESCAPE') {
-        handleKey('ESCAPE');
+      } else if (key === "ESCAPE") {
+        handleKey("ESCAPE");
       } else if (down["LEFT SHIFT"] || down["RIGHT SHIFT"]) {
         if (key.length === 1 && !parseInt(key)) {
           handleKey(key.toUpperCase());
@@ -204,4 +216,17 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
   // Set status icon
   status(DEFAULT_STATUS_ICON);
 
+  // Watch directory for images and run OCR
+  if (ocrDirectory) {
+    watch(ocrDirectory).on("data", async (filePath) => {
+      if (filePath.endsWith(".png")) {
+        const data = await ocr(filePath);
+        stack += data;
+        if (verbose) {
+          console.log("OCR output added to stack:");
+          console.log(data);
+        }
+      }
+    });
+  }
 };
