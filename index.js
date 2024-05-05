@@ -5,12 +5,13 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-import { main } from './main.js';
-import { listModels, models } from './models.js';
+import { main } from './src/main.js';
+import { listModels, models } from './src/models.js';
+import { status } from './src/status/status.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const banner = fs.readFileSync(path.join(__dirname, 'banner.txt'), 'utf-8');
+const banner = fs.readFileSync(path.join(__dirname, 'src/assets/banner.txt'), 'utf-8');
 const packageText = fs.readFileSync(path.join(__dirname, 'package.json'), 'utf-8');
 const version = JSON.parse(packageText).version;
 
@@ -63,6 +64,8 @@ program
 
     console.log(chalk.red(banner.replace('v0.0.0', chalk.red(`v${version}`))));
     console.log(chalk.bgRed('Listening for keyboard input. Press `Ctrl + C` to exit.\n'));
+
+    status();
 
     if (!options.model) {
       options.model = models[options.provider][0];

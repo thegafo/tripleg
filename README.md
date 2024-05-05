@@ -13,7 +13,7 @@ Triple G is an experimental AI completion tool designed to enhance productivity 
 ### Prerequisites
 
 - Node.js (v16 or later recommended)
-- Compatible with macOS (possibly compatible with Linux, but not tested)
+- Compatible with macOS (possibly compatible with Linux and Windows, but not tested)
 - Enable accessibility for the terminal or wherever you want to run from
 
 ```bash
@@ -29,7 +29,19 @@ npm install -g tripleg
 tripleg --provider openai -m gpt-3.5-turbo
 ```
 
+### Options
+
+- `-p, --provider <provider>`: Specify the provider for the model.
+- `-m, --model <model>`: Specify the model to use.
+- `-sp, --system-prompt <prompt>`: Set a system guidance prompt.
+- `-d, --delay <ms>`: Set the delay between typing chunks.
+- `-l, --list`: List all available model options.
+- `-v, --verbose`: Display debug logs.
+- `-V, --version`: Output the version information.
+
 ## Key commands
+
+Interact with Triple G using these key sequences:
 
 - `ggg`: Trigger an AI completion at your cursor location.
 - `GGG`: Clear the internal context stack.
@@ -38,20 +50,13 @@ tripleg --provider openai -m gpt-3.5-turbo
 
 ## Providers
 
-Triple G supports the following providers:
+Triple G integrates with the following providers, each requiring specific API keys:
 
-- OpenAI
-- Together
-- Perplexity
-- Mistral
-- Groq
-- Ollama
+- **OpenAI:** `OPENAI_API_KEY`
+- **Together:** `TOGETHER_API_KEY`
+- **Perplexity:** `PERPLEXITY_API_KEY`
+- **Mistral:** `MISTRAL_API_KEY`
+- **Groq:** `GROQ_API_KEY`
+- **Ollama:** No API key required.
 
-Each provider needs specific API keys available as environment variables:
-
-- OpenAI: `OPENAI_API_KEY`
-- Together: `TOGETHER_API_KEY`
-- Perplexity: `PERPLEXITY_API_KEY`
-- Mistral: `MISTRAL_API_KEY`
-- Groq: `GROQ_API_KEY`
-- Ollama: None required
+Ensure the corresponding environment variables are set for seamless integration.
