@@ -50,4 +50,5 @@ export const listModels = () => {
     });
     console.log();
   }
+  console.log('NOTE: All available models are not listed here.')
 }

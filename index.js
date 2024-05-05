@@ -7,7 +7,6 @@ import path from 'path';
 
 import { main } from './src/main.js';
 import { listModels, models } from './src/models.js';
-import { status } from './src/status/status.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -64,8 +63,6 @@ program
 
     console.log(chalk.red(banner.replace('v0.0.0', chalk.red(`v${version}`))));
     console.log(chalk.bgRed('Listening for keyboard input. Press `Ctrl + C` to exit.\n'));
-
-    status();
 
     if (!options.model) {
       options.model = models[options.provider][0];

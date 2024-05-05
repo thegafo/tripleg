@@ -1,4 +1,3 @@
-
 import { exec } from 'child_process';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -6,15 +5,30 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function status() {
-  try {
-    exec(`xcrun swiftc -o ${__dirname}/Status ${__dirname}/Status.swift -framework Cocoa`, (error, stdout, stderr) => {
-      if (error) return;
+let child = null;
 
-      const child = exec(`${__dirname}/Status`, (error, stdout, stderr) => {
+// Define a single reusable function to handle process exit
+const killChildOnExit = () => {
+  if (child) {
+    child.kill();
+    child = null;
+  }
+};
+
+export function status(icon = "bolt.horizontal") {
+  try {
+    const command = `test -f ${__dirname}/Status || swiftc -o ${__dirname}/Status ${__dirname}/Status.swift -framework Cocoa`;
+    exec(command, (error) => {
+      if (error) return;
+      if (child) {
+        child.kill();
+        child = null;
+        process.removeListener('exit', killChildOnExit);  // Remove the existing listener
+      }
+      child = exec(`STATUS_ICON=${icon} ${__dirname}/Status`, (error) => {
         if (error) return;
       });
-      process.on('exit', () => child.kill()); // catch exit and kill the child process
+      process.on('exit', killChildOnExit); // Re-add the listener
     });
   } catch { }
 }

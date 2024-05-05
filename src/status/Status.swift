@@ -6,13 +6,15 @@ class StatusItemController: NSObject {
     
     override init() {
         super.init()
+
+        let icon = ProcessInfo.processInfo.environment["STATUS_ICON"] ?? "bolt.horizontal"
         
         if let button = statusItem.button {
-            if let image = NSImage(systemSymbolName: "bolt.horizontal", accessibilityDescription: nil) {
+            if let image = NSImage(systemSymbolName: icon, accessibilityDescription: nil) {
                 button.image = image
                 button.action = #selector(showPopover(sender:))
             } else {
-                print("Failed to load SF Symbol: magnifyingglass")
+                print("Failed to load SF Symbol: \(icon)")
             }
         }
     }
