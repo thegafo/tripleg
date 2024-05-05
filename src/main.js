@@ -172,7 +172,7 @@ export const main = async ({ provider, model, systemPrompt, typeDelay = 5, verbo
       } else if (key === 'ESCAPE') {
         handleKey('ESCAPE');
       } else if (down["LEFT SHIFT"] || down["RIGHT SHIFT"]) {
-        if (key.length === 1) {
+        if (key.length === 1 && !parseInt(key)) {
           handleKey(key.toUpperCase());
         } else {
           if (shiftMap[key]) {

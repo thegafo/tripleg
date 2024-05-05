@@ -25,10 +25,13 @@ export function status(icon = "bolt.horizontal") {
         child = null;
         process.removeListener('exit', killChildOnExit);  // Remove the existing listener
       }
-      child = exec(`STATUS_ICON=${icon} ${__dirname}/Status`, (error) => {
+      child = exec(`STATUS_ICON=${icon} ${__dirname}/Status`, (error, stdout) => {
         if (error) return;
+        process.exit();
       });
       process.on('exit', killChildOnExit); // Re-add the listener
     });
   } catch { }
 }
+
+status();
