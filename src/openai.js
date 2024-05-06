@@ -17,11 +17,15 @@ export function chat(systemPrompt = '', userPrompt = '', provider = 'openai', mo
     }
 
     history.push({ "role": "user", "content": userPrompt });
-    stream = await openai.chat.completions.create({
-      model: model,
-      messages: history,
-      stream: true,
-    });
+    try {
+      stream = await openai.chat.completions.create({
+        model: model,
+        messages: history,
+        stream: true,
+      });
+    } catch (error) {
+      return dataEmitter.emit('error', error);
+    }
     let result = '';
 
     try {
@@ -57,6 +61,10 @@ export function chat(systemPrompt = '', userPrompt = '', provider = 'openai', mo
 
 export const resetChat = () => {
   history = [];
+}
+
+export const removeLastMessage = () => {
+  history.pop();
 }
 
 export function getCompletion(systemPrompt = '', userPrompt = '', provider = 'openai', model = 'gpt-3.5-turbo') {

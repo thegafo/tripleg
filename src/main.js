@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { type, backspace, listen } from "./keyboard.js";
-import { chat, resetChat } from "./openai.js";
+import { chat, removeLastMessage, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
 import { monitorClipboard } from "./clipboard.js";
 import { status } from "./status/status.js";
@@ -38,6 +38,14 @@ export const main = async ({
       return;
     }
 
+    // Handle backspace by removing last character from stack
+    if (key === "BACKSPACE") {
+      if (stack.length > 0) {
+        stack = stack.slice(0, -1);
+      }
+      return;
+    }
+
     // Add key to stack
     stack += key;
 
@@ -63,7 +71,7 @@ export const main = async ({
 
         const { stream, killStream } = await chat(
           systemPrompt,
-          message || " ",
+          message,
           provider,
           model
         );
@@ -119,6 +127,12 @@ export const main = async ({
           if (verbose) {
             console.log("\nstream closed");
           }
+          queue.push("<<<done>>>");
+          await processQueue();
+        });
+        stream.on("error", async (error) => {
+          console.log("Error:", error.message);
+          removeLastMessage();
           queue.push("<<<done>>>");
           await processQueue();
         });
@@ -180,7 +194,7 @@ export const main = async ({
       } else if (key === "RETURN") {
         handleKey("\n");
       } else if (key === "BACKSPACE") {
-        handleKey("\b");
+        handleKey("BACKSPACE");
       } else if (key === "ESCAPE") {
         handleKey("ESCAPE");
       } else if (down["LEFT SHIFT"] || down["RIGHT SHIFT"]) {
