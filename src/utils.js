@@ -14,6 +14,8 @@ export const keyMap = {
 };
 
 export const ignoreKeys = [
+  "LEFT CTRL",
+  "RIGHT CTRL",
   "LEFT CONTROL",
   "RIGHT CONTROL",
   "LEFT ALT",

@@ -4,12 +4,16 @@ import { type, backspace, listen } from "./keyboard.js";
 import { chat, removeLastMessage, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
 import { monitorClipboard } from "./clipboard.js";
-import { status } from "./status/status.js";
+import { status, updateStatus } from "./status/status.js";
 import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
+
+const PROCESS_STACK_TRIGGER = "ggg";
+const RESET_STACK_TRIGGER = "GGG";
+const EXIT_TRIGGER = "gGg";
 
 export const main = async ({
   provider,
@@ -56,7 +60,7 @@ export const main = async ({
 
     if (stack.length >= 3) {
       // Process stack
-      if (stack.slice(-3) === "ggg") {
+      if (stack.slice(-3) === PROCESS_STACK_TRIGGER) {
         const message = stack.slice(0, -3).trim();
         if (verbose) {
           console.log(`---\nProcessing stack:\n${message}\n---`);
@@ -67,7 +71,7 @@ export const main = async ({
         // Remove trigger text
         await backspace(3);
 
-        status(PROCESS_STATUS_ICON);
+        updateStatus(PROCESS_STATUS_ICON);
 
         const { stream, killStream } = await chat(
           systemPrompt,
@@ -101,7 +105,7 @@ export const main = async ({
               stack = "";
               cancel = false;
               ignore = false;
-              status(DEFAULT_STATUS_ICON);
+              updateStatus(DEFAULT_STATUS_ICON);
               break;
             }
             // replace newlines with better newline that works across environments
@@ -139,7 +143,7 @@ export const main = async ({
       }
 
       // Reset stack
-      else if (stack.slice(-3) === "GGG") {
+      else if (stack.slice(-3) === RESET_STACK_TRIGGER) {
         ignore = true;
         // Remove trigger text
         await backspace(3);
@@ -154,7 +158,7 @@ export const main = async ({
       }
 
       // Exit
-      else if (stack.slice(-3) === "gGg") {
+      else if (stack.slice(-3) === EXIT_TRIGGER) {
         ignore = true;
         stack = "";
         // Remove trigger text
@@ -163,18 +167,6 @@ export const main = async ({
         await type("Goodbye!");
         await sleep(100);
         process.exit();
-      }
-
-      // Print stack
-      else if (stack.slice(-3) === "ggG") {
-        ignore = true;
-        // Remove trigger text
-        await backspace(3);
-        await sleep(100);
-        await type(stack.slice(0, -3));
-        await sleep(100);
-        stack = "";
-        ignore = false;
       }
     }
   };

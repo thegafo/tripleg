@@ -38,7 +38,7 @@ tripleg --provider openai -m gpt-3.5-turbo
 - `-sp, --system-prompt <prompt>`: Set a system guidance prompt.
 - `-d, --delay <ms>`: Set the delay between typing chunks.
 - `-l, --list`: List all available model options.
-- `-o, --ocr <directory`: Perform OCR on images in the specified directory (only available on macOS).
+- `-o, --ocr <directory`: Perform OCR on images in the specified directory (experimental & only available on macOS).
 - `-h, --help`: Display the help information.
 - `-v, --verbose`: Display debug logs.
 - `-V, --version`: Output the version information.
@@ -49,7 +49,6 @@ Interact with Triple G using these key sequences:
 
 - `ggg`: Trigger an AI completion at your cursor location.
 - `GGG`: Clear the internal context stack.
-- `ggG`: Print the current context stack to the terminal.
 - `gGg`: Exit Triple G.
 
 ## Providers

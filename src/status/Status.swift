@@ -26,6 +26,14 @@ class StatusItemController: NSObject {
         menu.addItem(quitItem)
         statusItem.menu = menu
     }
+
+    func updateIcon(iconName: String) {
+        if let image = NSImage(systemSymbolName: iconName, accessibilityDescription: nil) {
+            statusItem.button?.image = image
+        } else {
+            print("Failed to load SF Symbol: \(iconName)")
+        }
+    }
     
     @objc func quitApp(sender: NSMenuItem) {
         print("Quit")
@@ -40,7 +48,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         statusItemController = StatusItemController()
+        // Start a new thread for the command line input to avoid blocking the main thread
+        DispatchQueue.global(qos: .background).async {
+            while true {
+                print(">>> ")
+                if let input = readLine() {
+                    DispatchQueue.main.async {
+                        self.statusItemController.updateIcon(iconName: input)
+                    }
+                }
+            }
+        }
     }
+
 }
 
 let app = NSApplication.shared

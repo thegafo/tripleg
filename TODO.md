@@ -1,9 +1,9 @@
 # TODO
 
-- Improve README
+- Refactor main file
+- Fix keypresses when capslock is active
 - UX ideas / improvements
-- More providers (more local?)
+- More providers
 - Ability to change trigger
-- Convert to typescript? (nah)
 - Replace Robot JS with something lighter
-  - Debating adding mac specific keyboard support using AppleScript, to avoid dependencies here
+  - Debating adding mac specific keyboard support using Swift or AppleScript, to avoid NPM dependencies here
