@@ -19,5 +19,3 @@ export function watch(directory) {
   // Return the event emitter directly
   return emitter;
 }
-
-// watch(".").on('data', console.log);

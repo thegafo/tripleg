@@ -52,6 +52,3 @@ export function updateStatus(input) {
     console.error('No active child process to send input to.');
   }
 }
-
-
-status("bolt.horizontal");
