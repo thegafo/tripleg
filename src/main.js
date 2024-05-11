@@ -11,10 +11,6 @@ import { ocr } from "./ocr/ocr.js";
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
 
-const PROCESS_STACK_TRIGGER = "ggg";
-const RESET_STACK_TRIGGER = "GGG";
-const EXIT_TRIGGER = "gGg";
-
 export const main = async ({
   provider,
   model,
@@ -22,7 +18,13 @@ export const main = async ({
   typeDelay = 5,
   verbose = false,
   ocrDirectory = undefined,
+  triggerKey = "g",
 }) => {
+
+  const PROCESS_STACK_TRIGGER = triggerKey.repeat(3);
+  const RESET_STACK_TRIGGER = triggerKey.toUpperCase().repeat(3);
+  const EXIT_TRIGGER = triggerKey + triggerKey.toUpperCase() + triggerKey;
+
   let stack = "";
   let ignore = false;
   let cancel = false;

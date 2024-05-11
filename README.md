@@ -36,6 +36,7 @@ tripleg --provider openai -m gpt-3.5-turbo
 - `-p, --provider <provider>`: Specify the provider for the model.
 - `-m, --model <model>`: Specify the model to use.
 - `-sp, --system-prompt <prompt>`: Set a system guidance prompt.
+- `-t, --trigger-key <key>`: Set the trigger key for completion.
 - `-d, --delay <ms>`: Set the delay between typing chunks.
 - `-l, --list`: List all available model options.
 - `-o, --ocr <directory`: Perform OCR on images in the specified directory (experimental & only available on macOS).

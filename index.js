@@ -33,7 +33,7 @@ program
   .option('-m, --model <model>', 'specify the model', (value) => {
     if (value) {
       if (models[selectedProvider].indexOf(value) === -1) {
-        console.log(chalk.bgRed(`Unknown model specified: ${value}! Use at your own risk.`));
+        console.log(chalk.bgYellow(`Unknown model specified: ${value}! Use at your own risk.`));
       }
       return value;
     }
@@ -45,6 +45,13 @@ program
     }
     return value;
   }, DEFAULT_SYSTEM_PROMPT)
+  .option('-t, --trigger-key <key>', 'specify the trigger key', (value) => {
+    if (value.length !== 1 || !/[a-z]/.test(value)) {
+      console.log(chalk.red('The trigger key must be a single lowercase letter.'));
+      process.exit();
+    }
+    return value;
+  }, 'g')
   .option('-d, --delay <ms>', 'the delay between typing chunks', (value) => {
     return parseInt(value, 10);
   }, 5)
@@ -80,6 +87,7 @@ program
       provider: options.provider,
       model: options.model,
       systemPrompt: options.systemPrompt,
+      triggerKey: options.triggerKey,
       typeDelay: options.delay,
       verbose: options.verbose,
       ocrDirectory: options.ocr,
