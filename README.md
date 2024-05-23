@@ -50,6 +50,7 @@ Interact with Triple G using these key sequences:
 
 - `ggg`: Trigger an AI completion at your cursor location.
 - `GGG`: Clear the internal context stack.
+- `ggx`: [Experimental, MacOS only feature] Take a screenshot and perform OCR.
 - `gGg`: Exit Triple G.
 
 ## Providers

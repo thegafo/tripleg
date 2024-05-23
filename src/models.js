@@ -8,6 +8,7 @@ export const models = {
     'gpt-4-1106-preview',
     'gpt-4',
     'gpt-4-32k',
+    'gpt-4o',
   ],
   groq: [
     'llama3-70b-8192',

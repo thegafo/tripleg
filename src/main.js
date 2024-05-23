@@ -3,10 +3,11 @@
 import { type, backspace, listen } from "./keyboard.js";
 import { chat, removeLastMessage, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
-import { monitorClipboard } from "./clipboard.js";
+import { monitorClipboard, resetClipboard } from "./clipboard.js";
 import { status, updateStatus } from "./status/status.js";
 import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
+import { screenshot } from "./screenshot/screenshot.js";
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
@@ -154,6 +155,7 @@ export const main = async ({
         stack = "";
         ignore = false;
         resetChat();
+        resetClipboard();
         if (verbose) {
           console.log("Chat reset");
         }
@@ -169,6 +171,11 @@ export const main = async ({
         await type("Goodbye!");
         await sleep(100);
         process.exit();
+      }
+
+      else if (stack.slice(-3) === 'ggx' && ocrDirectory) {
+        await backspace(3);
+        await screenshot(ocrDirectory);
       }
     }
   };

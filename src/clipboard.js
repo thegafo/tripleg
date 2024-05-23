@@ -10,10 +10,16 @@ export function monitorClipboard(ms = 500) {
   setInterval(() => {
     const currentClip = clipboard.readSync();  // Read current clipboard content
     if (currentClip !== lastClip) {
-      emitter.emit('data', currentClip);  // Emit event if clipboard content changes
+      if (currentClip) {
+        emitter.emit('data', currentClip);  // Emit event if clipboard content changes
+      }
       lastClip = currentClip;  // Update lastClip to the new content
     }
   }, ms);
 
   return emitter;
+}
+
+export function resetClipboard() {
+  clipboard.writeSync('');
 }
