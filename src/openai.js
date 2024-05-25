@@ -1,45 +1,95 @@
 import OpenAI from "openai";
-import EventEmitter from 'events';
+import EventEmitter from "events";
 import { getConfig } from "./utils.js";
 
 let history = [];
+let stream;
 
-export function chat(systemPrompt = '', userPrompt = '', provider = 'openai', model = 'gpt-3.5-turbo') {
+export function chat(
+  systemPrompt = "",
+  userPrompt = "",
+  provider = "openai",
+  model = "gpt-3.5-turbo",
+  tools = {},
+  config = [],
+  _dataEmitter
+) {
   const openai = new OpenAI(getConfig(provider));
-  let stream;
-  const dataEmitter = new EventEmitter();
+  const dataEmitter = _dataEmitter || new EventEmitter();
 
   async function main() {
     if (history.length == 0) {
       if (systemPrompt) {
-        history.push({ "role": "system", "content": systemPrompt });
+        history.push({ role: "system", content: systemPrompt });
       }
     }
-
-    history.push({ "role": "user", "content": userPrompt });
+    if (userPrompt) {
+      history.push({ role: "user", content: userPrompt });
+    }
     try {
       stream = await openai.chat.completions.create({
         model: model,
         messages: history,
         stream: true,
+        tool_choice: config.length ? "auto" : undefined,
+        tools: config.length ? config : undefined,
       });
     } catch (error) {
-      return dataEmitter.emit('error', error);
+      return dataEmitter.emit("error", error);
     }
-    let result = '';
+    let result = "";
 
+    const toolCalls = [];
     try {
       for await (const chunk of stream) {
-        dataEmitter.emit('data', chunk.choices[0].delta.content);
-        result += chunk.choices[0].delta.content;
+        const delta = chunk.choices[0].delta;
+        dataEmitter.emit("data", delta.content);
+        result += delta.content;
+
+        // Parse tool calls
+        if (delta.tool_calls) {
+          const toolCall = delta.tool_calls[0];
+          if (!toolCalls[toolCall.index]) {
+            toolCalls[toolCall.index] = toolCall;
+          } else {
+            toolCalls[toolCall.index].function.arguments +=
+              toolCall.function.arguments;
+          }
+        }
       }
     } catch (error) {
-      dataEmitter.emit('error', error);
+      dataEmitter.emit("error", error);
     } finally {
-      dataEmitter.emit('close');
-      history.push({ "role": "assistant", "content": result });
-    }
+      if (toolCalls.length) {
+        history.push({
+          role: "assistant",
+          content: null,
+          tool_calls: toolCalls,
+        });
+        // execute tool calls and push results to history
+        for (const toolCall of toolCalls) {
+          try {
+            const result = await tools[toolCall.function.name](JSON.parse(toolCall.function.arguments));
+            history.push({
+              role: "tool",
+              tool_call_id: toolCall.id,
+              content: result,
+            });
 
+          } catch (err) {
+            history.push({
+              role: "tool",
+              tool_call_id: toolCall.id,
+              content: `Error executing tool: ${err.message}`,
+            });
+          }
+        }
+        return chat(systemPrompt, "", provider, model, tools, config, dataEmitter);
+      } else {
+        history.push({ role: "assistant", content: result });
+        dataEmitter.emit("close");
+      }
+    }
   }
 
   const killStream = () => {
@@ -48,9 +98,9 @@ export function chat(systemPrompt = '', userPrompt = '', provider = 'openai', mo
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
-  main().catch(error => {
+  main().catch((error) => {
     console.log(error.error.message || error.status);
     process.exit();
   });
@@ -58,47 +108,10 @@ export function chat(systemPrompt = '', userPrompt = '', provider = 'openai', mo
   return { stream: dataEmitter, killStream };
 }
 
-
 export const resetChat = () => {
   history = [];
-}
+};
 
 export const removeLastMessage = () => {
   history.pop();
-}
-
-export function getCompletion(systemPrompt = '', userPrompt = '', provider = 'openai', model = 'gpt-3.5-turbo') {
-  const openai = new OpenAI(getConfig(provider));
-  const dataEmitter = new EventEmitter();
-  let stream;
-
-  async function main() {
-    stream = await openai.completions.create({
-      model: model,
-      prompt: systemPrompt + userPrompt,
-      stream: true,
-    });
-
-    try {
-      for await (const chunk of stream) {
-        dataEmitter.emit('data', chunk.choices[0].text);
-      }
-    } catch (error) {
-      dataEmitter.emit('error', error);
-    } finally {
-      dataEmitter.emit('close');
-    }
-  }
-
-  const killStream = () => {
-    try {
-      stream.controller.abort();
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  main().catch(error => dataEmitter.emit('error', error));
-
-  return { stream: dataEmitter, killStream };
-}
+};

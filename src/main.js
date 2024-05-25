@@ -8,6 +8,8 @@ import { status, updateStatus } from "./status/status.js";
 import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
 import { screenshot } from "./screenshot/screenshot.js";
+import { config as toolConfig, tools } from "./tools.js";
+
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
@@ -20,6 +22,7 @@ export const main = async ({
   verbose = false,
   ocrDirectory = undefined,
   triggerKey = "g",
+  useTools = false,
 }) => {
 
   const PROCESS_STACK_TRIGGER = triggerKey.repeat(3);
@@ -80,7 +83,9 @@ export const main = async ({
           systemPrompt,
           message,
           provider,
-          model
+          model,
+          useTools ? tools : undefined,
+          useTools ? toolConfig : undefined,
         );
         let queueIsProcessing = false;
         let result = "";
@@ -107,7 +112,9 @@ export const main = async ({
               isProcessing = false;
               stack = "";
               cancel = false;
-              ignore = false;
+              sleep(100).then(() => {
+                ignore = false;
+              });
               updateStatus(DEFAULT_STATUS_ICON);
               break;
             }

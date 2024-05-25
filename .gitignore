@@ -7,3 +7,4 @@ src/ocr/OCR
 *.ts
 mic/
 type/
+test.js

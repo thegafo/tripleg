@@ -40,9 +40,10 @@ tripleg --provider openai -m gpt-3.5-turbo
 - `-d, --delay <ms>`: Set the delay between typing chunks.
 - `-l, --list`: List all available model options.
 - `-o, --ocr <directory`: Perform OCR on images in the specified directory (experimental & only available on macOS).
-- `-h, --help`: Display the help information.
+- `-u, --use-tools`: Use experimental system tools (e.g., read and write files, execute bash commands).
 - `-v, --verbose`: Display debug logs.
 - `-V, --version`: Output the version information.
+- `-h, --help`: Display the help information.
 
 ## Key commands
 

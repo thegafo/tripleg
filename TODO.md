@@ -1,11 +1,11 @@
 # TODO
 
-- Refactor main file
+- Refactor main and openai files - very much needed
 - Fix keypresses when capslock is active
 - UX ideas / improvements
-- More providers
+- More providers?
 - Replace Robot JS with something lighter
-  - Debating adding mac specific keyboard support using Swift or AppleScript, to avoid NPM dependencies here
-- Fix issue with auto typing sometimes being detected as user typing
+  - Debating adding mac specific keyboard support using Swift or AppleScript, to avoid NPM dependencies here (experience so far has not been great)
+- Fix issue with auto typing sometimes being detected as user typing - this may be resolved with sleep added before ignore variable reset
 - Express server for chat interface?
-- Tool usage - read and write files, execute bash commands, perform search, etc.
+- Custom tool usage

@@ -68,6 +68,9 @@ program
       return value;
     }
   }, undefined)
+  .option('-u, --use-tools', 'use experimental system tools', () => {
+    return true;
+  }, false)
   .option('-v, --verbose', 'display debug logs', () => {
     return true;
   }, false)
@@ -91,6 +94,7 @@ program
       typeDelay: options.delay,
       verbose: options.verbose,
       ocrDirectory: options.ocr,
+      useTools: options.useTools,
     });
   });
 
