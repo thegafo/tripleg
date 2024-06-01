@@ -11,6 +11,10 @@ export const keyMap = {
   "DOT": ".",
   "FORWARD SLASH": "/",
   "BACKTICK": "`",
+  "SPACE": " ",
+  "RETURN": "\n",
+  "BACKSPACE": "\b",
+  "TAB": "\t",
 };
 
 export const ignoreKeys = [
@@ -24,6 +28,14 @@ export const ignoreKeys = [
   "RIGHT META",
   "LEFT SUPER",
   "RIGHT SUPER",
+  "DELETE",
+  "UP ARROW",
+  "DOWN ARROW",
+  "LEFT ARROW",
+  "RIGHT ARROW",
+  "HOME",
+  "PAGE UP",
+  "PAGE DOWN",
 ];
 
 export const shiftMap = {
@@ -58,6 +70,8 @@ export const printKey = (key) => {
       break;
     case "\b":
       keyName = "BACKSPACE";
+    case "\t":
+      keyName = "TAB";
       break;
     case " ":
       keyName = "SPACE";

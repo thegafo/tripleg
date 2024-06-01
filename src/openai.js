@@ -12,6 +12,7 @@ export function chat(
   model = "gpt-3.5-turbo",
   tools = {},
   config = [],
+  verbose = false,
   _dataEmitter
 ) {
   const openai = new OpenAI(getConfig(provider));
@@ -44,7 +45,9 @@ export function chat(
       for await (const chunk of stream) {
         const delta = chunk.choices[0].delta;
         dataEmitter.emit("data", delta.content);
-        result += delta.content;
+        if (delta.content) {
+          result += delta.content;
+        }
 
         // Parse tool calls
         if (delta.tool_calls) {
@@ -54,6 +57,10 @@ export function chat(
           } else {
             toolCalls[toolCall.index].function.arguments +=
               toolCall.function.arguments;
+          }
+          if (verbose) {
+            // log without console.log to prevent newline
+            process.stdout.write('.');
           }
         }
       }
@@ -69,6 +76,10 @@ export function chat(
         // execute tool calls and push results to history
         for (const toolCall of toolCalls) {
           try {
+            if (verbose) {
+              console.log(`\nExecuting tool: ${toolCall.function.name}`);
+              console.log(`Arguments: ${toolCall.function.arguments}`);
+            }
             const result = await tools[toolCall.function.name](JSON.parse(toolCall.function.arguments));
             history.push({
               role: "tool",
@@ -76,15 +87,22 @@ export function chat(
               content: result,
             });
 
+            if (verbose) {
+              console.log(`Tool result: ${result}`);
+            }
+
           } catch (err) {
             history.push({
               role: "tool",
               tool_call_id: toolCall.id,
               content: `Error executing tool: ${err.message}`,
             });
+            if (verbose) {
+              console.log(`Error executing tool: ${err.message}`);
+            }
           }
         }
-        return chat(systemPrompt, "", provider, model, tools, config, dataEmitter);
+        return chat(systemPrompt, "", provider, model, tools, config, verbose, dataEmitter);
       } else {
         history.push({ role: "assistant", content: result });
         dataEmitter.emit("close");
@@ -115,3 +133,7 @@ export const resetChat = () => {
 export const removeLastMessage = () => {
   history.pop();
 };
+
+export const getLastMessage = () => {
+  return history[history.length - 1];
+}

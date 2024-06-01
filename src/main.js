@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { type, backspace, listen } from "./keyboard.js";
-import { chat, removeLastMessage, resetChat } from "./openai.js";
+import { chat, getLastMessage, removeLastMessage, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
 import { monitorClipboard, resetClipboard } from "./clipboard.js";
 import { status, updateStatus } from "./status/status.js";
@@ -9,7 +9,6 @@ import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
 import { screenshot } from "./screenshot/screenshot.js";
 import { config as toolConfig, tools } from "./tools.js";
-
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
@@ -25,9 +24,11 @@ export const main = async ({
   useTools = false,
 }) => {
 
-  const PROCESS_STACK_TRIGGER = triggerKey.repeat(3);
-  const RESET_STACK_TRIGGER = triggerKey.toUpperCase().repeat(3);
+  const PROCESS_TRIGGER = triggerKey.repeat(3);
+  const RESET_TRIGGER = triggerKey.toUpperCase().repeat(3);
   const EXIT_TRIGGER = triggerKey + triggerKey.toUpperCase() + triggerKey;
+  const OCR_TRIGGER = triggerKey + triggerKey + "x";
+  const REPEAT_TRIGGER = triggerKey + triggerKey + "r";
 
   let stack = "";
   let ignore = false;
@@ -65,8 +66,9 @@ export const main = async ({
     }
 
     if (stack.length >= 3) {
+      const lastThree = stack.slice(-3);
       // Process stack
-      if (stack.slice(-3) === PROCESS_STACK_TRIGGER) {
+      if (lastThree === PROCESS_TRIGGER) {
         const message = stack.slice(0, -3).trim();
         if (verbose) {
           console.log(`---\nProcessing stack:\n${message}\n---`);
@@ -86,6 +88,7 @@ export const main = async ({
           model,
           useTools ? tools : undefined,
           useTools ? toolConfig : undefined,
+          verbose
         );
         let queueIsProcessing = false;
         let result = "";
@@ -153,11 +156,9 @@ export const main = async ({
       }
 
       // Reset stack
-      else if (stack.slice(-3) === RESET_STACK_TRIGGER) {
+      else if (lastThree === RESET_TRIGGER) {
         ignore = true;
-        // Remove trigger text
         await backspace(3);
-
         await sleep(100);
         stack = "";
         ignore = false;
@@ -169,10 +170,9 @@ export const main = async ({
       }
 
       // Exit
-      else if (stack.slice(-3) === EXIT_TRIGGER) {
+      else if (lastThree === EXIT_TRIGGER) {
         ignore = true;
         stack = "";
-        // Remove trigger text
         await backspace(3);
         await sleep(100);
         await type("Goodbye!");
@@ -180,9 +180,19 @@ export const main = async ({
         process.exit();
       }
 
-      else if (stack.slice(-3) === 'ggx' && ocrDirectory) {
+      else if (lastThree === OCR_TRIGGER && ocrDirectory) {
         await backspace(3);
         await screenshot(ocrDirectory);
+      }
+
+      else if (lastThree === REPEAT_TRIGGER) {
+        ignore = true;
+        await backspace(3);
+        await sleep(100);
+        const lastMessage = getLastMessage();
+        await type(lastMessage.content);
+        await sleep(100);
+        ignore = false;
       }
     }
   };
@@ -197,20 +207,18 @@ export const main = async ({
         }
       }
 
-      if (key === "SPACE") {
-        handleKey(" ");
-      } else if (key === "RETURN") {
-        handleKey("\n");
-      } else if (key === "BACKSPACE") {
-        handleKey("BACKSPACE");
-      } else if (key === "ESCAPE") {
-        handleKey("ESCAPE");
+      if (key === "BACKSPACE" || key === "ESCAPE") {
+        handleKey(key);
       } else if (down["LEFT SHIFT"] || down["RIGHT SHIFT"]) {
         if (key.length === 1 && !parseInt(key)) {
           handleKey(key.toUpperCase());
         } else {
           if (shiftMap[key]) {
             handleKey(shiftMap[key]);
+          } else {
+            if (verbose) {
+              console.log(`Unhandled key: ${key}`);
+            }
           }
         }
       } else {
@@ -219,6 +227,10 @@ export const main = async ({
         } else {
           if (keyMap[key]) {
             handleKey(keyMap[key]);
+          } else {
+            if (verbose) {
+              console.log(`Unhandled key: ${key}`);
+            }
           }
         }
       }

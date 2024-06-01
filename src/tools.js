@@ -62,7 +62,6 @@ export const config = [
 export const tools = {
   writeFile: ({ path, content }) => {
     return new Promise((resolve, reject) => {
-      console.log("Writing to file", path);
       fs.writeFile(path, content, (err) => {
         if (err) {
           resolve(`Error writing to file: ${err.message}`);
