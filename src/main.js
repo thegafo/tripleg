@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { type, backspace, listen } from "./keyboard.js";
-import { chat, getLastMessage, removeLastMessage, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
 import { monitorClipboard, resetClipboard } from "./clipboard.js";
 import { status, updateStatus } from "./status/status.js";
@@ -23,6 +22,14 @@ export const main = async ({
   triggerKey = "g",
   useTools = false,
 }) => {
+  // hack to import chat functions compatible with provider
+  let chat, getLastMessage, removeLastMessage, resetChat;
+  import(provider === 'gemini' ? './gemini.js' : './openai.js').then((module) => {
+    chat = module.chat;
+    getLastMessage = module.getLastMessage;
+    removeLastMessage = module.removeLastMessage;
+    resetChat = module.resetChat;
+  });
 
   const PROCESS_TRIGGER = triggerKey.repeat(3);
   const RESET_TRIGGER = triggerKey.toUpperCase().repeat(3);
@@ -148,10 +155,11 @@ export const main = async ({
           await processQueue();
         });
         stream.on("error", async (error) => {
-          console.log("Error:", error.message);
+          console.error("Error during stream processing:", error);
           removeLastMessage();
           queue.push("<<<done>>>");
           await processQueue();
+          updateStatus(DEFAULT_STATUS_ICON);
         });
       }
 
