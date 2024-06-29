@@ -7,6 +7,7 @@ import path from 'path';
 
 import { main } from './src/main.js';
 import { listModels, models } from './src/models.js';
+import { installOptionalDependencies } from './src/install.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -70,6 +71,9 @@ program
   }, undefined)
   .option('-u, --use-tools', 'use experimental system tools', () => {
     return true;
+  }, false)
+  .option('-i, --install', 'install optional dependencies', () => {
+    installOptionalDependencies();
   }, false)
   .option('-v, --verbose', 'display debug logs', () => {
     return true;

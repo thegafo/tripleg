@@ -8,6 +8,8 @@ import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
 import { screenshot } from "./screenshot/screenshot.js";
 import { config as toolConfig, tools } from "./tools.js";
+import chalk from 'chalk';
+import { getMissingOptionalDependencies } from "./install.js";
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
@@ -23,13 +25,16 @@ export const main = async ({
   useTools = false,
 }) => {
   // hack to import chat functions compatible with provider
-  let chat, getLastMessage, removeLastMessage, resetChat;
-  import(provider === 'gemini' ? './gemini.js' : './openai.js').then((module) => {
-    chat = module.chat;
-    getLastMessage = module.getLastMessage;
-    removeLastMessage = module.removeLastMessage;
-    resetChat = module.resetChat;
-  });
+  try {
+    var module = await import(provider === 'gemini' ? './gemini.js' : './openai.js');
+  } catch (error) {
+    console.error(chalk.red(`Error importing chat module.`));
+    const missingDependencies = await getMissingOptionalDependencies();
+    console.log(chalk.yellow(`Missing optional dependencies: ${missingDependencies.join(', ')}`));
+    console.log(chalk.yellow(`Install optional dependencies by running: tripleg -i`));
+    process.exit();
+  }
+  const { chat, getLastMessage, removeLastMessage, resetChat } = module;
 
   const PROCESS_TRIGGER = triggerKey.repeat(3);
   const RESET_TRIGGER = triggerKey.toUpperCase().repeat(3);
