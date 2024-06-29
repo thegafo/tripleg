@@ -10,6 +10,11 @@ export const models = {
     'gpt-4-32k',
     'gpt-4o',
   ],
+  gemini: [
+    'gemini-1.5-pro-latest',
+    'gemini-1.5-flash-latest',
+    'gemini-1.0-pro',
+  ],
   groq: [
     'llama3-70b-8192',
     'llama3-8b-8192',

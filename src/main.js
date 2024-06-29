@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import { type, backspace, listen } from "./keyboard.js";
-import { chat, getLastMessage, removeLastMessage, resetChat } from "./openai.js";
 import { ignoreKeys, keyMap, printKey, shiftMap, sleep } from "./utils.js";
 import { monitorClipboard, resetClipboard } from "./clipboard.js";
 import { status, updateStatus } from "./status/status.js";
@@ -9,6 +8,8 @@ import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
 import { screenshot } from "./screenshot/screenshot.js";
 import { config as toolConfig, tools } from "./tools.js";
+import chalk from 'chalk';
+import { getMissingOptionalDependencies } from "./install.js";
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
@@ -23,6 +24,17 @@ export const main = async ({
   triggerKey = "g",
   useTools = false,
 }) => {
+  // hack to import chat functions compatible with provider
+  try {
+    var module = await import(provider === 'gemini' ? './gemini.js' : './openai.js');
+  } catch (error) {
+    console.error(chalk.red(`Error importing chat module.`));
+    const missingDependencies = await getMissingOptionalDependencies();
+    console.log(chalk.yellow(`Missing optional dependencies: ${missingDependencies.join(', ')}`));
+    console.log(chalk.yellow(`Install optional dependencies by running: tripleg -i`));
+    process.exit();
+  }
+  const { chat, getLastMessage, removeLastMessage, resetChat } = module;
 
   const PROCESS_TRIGGER = triggerKey.repeat(3);
   const RESET_TRIGGER = triggerKey.toUpperCase().repeat(3);
@@ -148,10 +160,11 @@ export const main = async ({
           await processQueue();
         });
         stream.on("error", async (error) => {
-          console.log("Error:", error.message);
+          console.error("Error during stream processing:", error);
           removeLastMessage();
           queue.push("<<<done>>>");
           await processQueue();
+          updateStatus(DEFAULT_STATUS_ICON);
         });
       }
 

@@ -1,6 +1,6 @@
 {
   "name": "tripleg",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -29,5 +29,8 @@
     "node-global-key-listener": "^0.1.1",
     "openai": "^4.28.0",
     "robotjs": "^0.6.0"
+  },
+  "optionalDependencies": {
+    "@google/generative-ai": "^0.14.0"
   }
 }

@@ -108,6 +108,8 @@ export const getConfig = (provider) => {
       apiKey: 'XXX',
       baseURL: "http://localhost:11434/v1",
     }
+  } else if (provider === 'gemini') {
+    return process.env.GEMINI_API_KEY;
   } else {
     return undefined;
   }
