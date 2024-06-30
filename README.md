@@ -65,11 +65,10 @@ Triple G integrates with the following providers, each requiring specific API ke
 - **Mistral:** `MISTRAL_API_KEY`
 - **Groq:** `GROQ_API_KEY`
 - **Gemini:** `GEMINI_API_KEY`
+- **Anthropic:** `ANTHROPIC_API_KEY`
 - **Ollama:** No API key required.
 
 Ensure the corresponding environment variables are set for seamless integration.
-
-_Coming soon: Anthropic support_
 
 ## Optional Dependencies
 

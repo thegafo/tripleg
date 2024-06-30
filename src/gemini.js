@@ -28,7 +28,6 @@ export function chat(
       const modelInstance = await genAI.getGenerativeModel({ model: model, systemInstruction: systemPrompt || undefined });
       stream = await modelInstance.startChat({
         history: history,
-        generationConfig: config,
       }).sendMessageStream(userPrompt);
     } catch (error) {
       return dataEmitter.emit("error", error);

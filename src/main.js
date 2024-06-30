@@ -26,7 +26,11 @@ export const main = async ({
 }) => {
   // hack to import chat functions compatible with provider
   try {
-    var module = await import(provider === 'gemini' ? './gemini.js' : './openai.js');
+    var module = await import(
+      provider === 'gemini' ? './gemini.js' :
+        provider === 'anthropic' ? './anthropic.js' :
+          './openai.js'
+    );
   } catch (error) {
     console.error(chalk.red(`Error importing chat module.`));
     const missingDependencies = await getMissingOptionalDependencies();

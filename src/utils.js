@@ -110,6 +110,10 @@ export const getConfig = (provider) => {
     }
   } else if (provider === 'gemini') {
     return process.env.GEMINI_API_KEY;
+  } else if (provider === 'anthropic') {
+    return {
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    }
   } else {
     return undefined;
   }
