@@ -30,20 +30,16 @@ export function chat(
     let result = "";
 
     try {
-      stream = await api.messages.create({
+      stream = await api.messages.stream({
         stream: true,
         max_tokens: MAX_TOKENS,
         messages: history,
         model: model,
         system: systemPrompt,
+      }).on('text', (text) => {
+        dataEmitter.emit('data', text);
+        result += text;
       });
-      for await (const event of stream) {
-        if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
-          process.stdout.write(event.delta.text);
-          dataEmitter.emit('data', event.delta.text);
-          result += event.delta.text;
-        }
-      }
     } catch (error) {
       dataEmitter.emit("error", error);
     } finally {
