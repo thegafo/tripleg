@@ -62,7 +62,7 @@ export const config = [
 export const tools = {
   writeFile: ({ path, content }) => {
     return new Promise((resolve, reject) => {
-      fs.writeFile(path, content, (err) => {
+      fs.writeFile(path, content.replace(/\\n/g, '\n'), (err) => {
         if (err) {
           resolve(`Error writing to file: ${err.message}`);
         } else {
@@ -95,4 +95,42 @@ export const tools = {
       });
     });
   },
+};
+
+export const convertToolsToAnthropicFormat = (tools) => {
+  return tools.map((tool) => {
+    const { function: func } = tool;
+    const output = {
+      name: func.name,
+      description: func.description,
+      input_schema: {
+        type: func.parameters.type,
+        properties: func.parameters.properties,
+        required: func.parameters.required
+      }
+    };
+    return output;
+  })
+};
+
+export const convertToolsToGeminiFormat = (tools) => {
+  return config.map((tool) => {
+    const { function: func } = tool;
+    const output = {
+      name: func.name,
+      parameters: {
+        type: func.parameters.type.toUpperCase(),
+        description: func.description,
+        properties: Object.entries(func.parameters.properties).reduce((acc, [key, value]) => {
+          acc[key] = {
+            type: value.type.toUpperCase(),
+            description: value.description
+          };
+          return acc;
+        }, {}),
+        required: func.parameters.required
+      }
+    };
+    return output;
+  });
 };

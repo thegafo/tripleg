@@ -16,6 +16,11 @@
     node-fetch "^2.6.7"
     web-streams-polyfill "^3.2.1"
 
+"@google/generative-ai@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.yarnpkg.com/@google/generative-ai/-/generative-ai-0.14.0.tgz#e4af89a71d231bce2eb0a3f3b6caab4ebf0a737d"
+  integrity sha512-wNgIGEpInlVd98SapqvnQX8HQz0zM43U9NMvrbIMKQzz2pQm60pJTeHHlICTDcy/yZNLsvFQ/RfD+Ck9H8K7vw==
+
 "@types/node-fetch@^2.6.4":
   version "2.6.11"
   resolved "https://registry.npmjs.org/@types/node-fetch/-/node-fetch-2.6.11.tgz"
