@@ -98,6 +98,7 @@ export const tools = {
 };
 
 export const convertToolsToAnthropicFormat = (tools) => {
+  if (!tools || !tools.length) return [];
   return tools.map((tool) => {
     const { function: func } = tool;
     const output = {
@@ -114,7 +115,8 @@ export const convertToolsToAnthropicFormat = (tools) => {
 };
 
 export const convertToolsToGeminiFormat = (tools) => {
-  return config.map((tool) => {
+  if (!tools || !tools.length) return [];
+  return tools.map((tool) => {
     const { function: func } = tool;
     const output = {
       name: func.name,

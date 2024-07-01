@@ -41,7 +41,6 @@ tripleg --provider openai -m gpt-3.5-turbo
 - `-l, --list`: List all available model options.
 - `-o, --ocr <directory`: Perform OCR on images in the specified directory (experimental & only available on macOS).
 - `-u, --use-tools`: Use experimental system tools (e.g., read and write files, execute bash commands).
-- `-i, --install`: Install optional dependencies (needed for Gemini).
 - `-v, --verbose`: Display debug logs.
 - `-V, --version`: Output the version information.
 - `-h, --help`: Display the help information.
@@ -69,13 +68,3 @@ Triple G integrates with the following providers, each requiring specific API ke
 - **Ollama:** No API key required.
 
 Ensure the corresponding environment variables are set for seamless integration.
-
-## Optional Dependencies
-
-By default only support for OpenAI-compatible modals is included. To enable support for other providers, like Gemini and Anthropic, you need to install optional dependencies:
-
-```bash
-tripleg --install
-```
-
-This will install dependencies needed for Gemini and other future providers.

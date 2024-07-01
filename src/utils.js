@@ -35,7 +35,7 @@ export const ignoreKeys = [
   "RIGHT ARROW",
   "HOME",
   "PAGE UP",
-  "PAGE DOWN",
+  // "PAGE DOWN",
 ];
 
 export const shiftMap = {

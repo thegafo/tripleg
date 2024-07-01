@@ -9,10 +9,12 @@ import { ocr } from "./ocr/ocr.js";
 import { screenshot } from "./screenshot/screenshot.js";
 import { config as toolConfig, tools } from "./tools.js";
 import chalk from 'chalk';
-import { getMissingOptionalDependencies } from "./install.js";
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
+const PAUSED_STATUS_ICON = "pause.rectangle";
+
+let systemPromptOverride;
 
 export const main = async ({
   provider,
@@ -25,19 +27,11 @@ export const main = async ({
   useTools = false,
 }) => {
   // hack to import chat functions compatible with provider
-  try {
-    var module = await import(
-      provider === 'gemini' ? './gemini.js' :
-        provider === 'anthropic' ? './anthropic.js' :
-          './openai.js'
-    );
-  } catch (error) {
-    console.error(chalk.red(`Error importing chat module.`));
-    const missingDependencies = await getMissingOptionalDependencies();
-    console.log(chalk.yellow(`Missing optional dependencies: ${missingDependencies.join(', ')}`));
-    console.log(chalk.yellow(`Install optional dependencies by running: tripleg -i`));
-    process.exit();
-  }
+  const module = await import(
+    provider === 'gemini' ? './gemini.js' :
+      provider === 'anthropic' ? './anthropic.js' :
+        './openai.js'
+  );
   const { chat, getLastMessage, removeLastMessage, resetChat } = module;
 
   const PROCESS_TRIGGER = triggerKey.repeat(3);
@@ -45,11 +39,13 @@ export const main = async ({
   const EXIT_TRIGGER = triggerKey + triggerKey.toUpperCase() + triggerKey;
   const OCR_TRIGGER = triggerKey + triggerKey + "x";
   const REPEAT_TRIGGER = triggerKey + triggerKey + "r";
+  const SET_SYSTEM_PROMPT_TRIGGER = triggerKey + triggerKey + "s";
 
   let stack = "";
   let ignore = false;
   let cancel = false;
   let isProcessing = true;
+  let paused = false;
 
   const handleKey = async (key) => {
     // Cancel current completion if user presses escape
@@ -98,7 +94,7 @@ export const main = async ({
         updateStatus(PROCESS_STATUS_ICON);
 
         const { stream, killStream } = await chat(
-          systemPrompt,
+          systemPromptOverride || systemPrompt,
           message,
           provider,
           model,
@@ -207,10 +203,40 @@ export const main = async ({
         await backspace(3);
         await sleep(100);
         const lastMessage = getLastMessage();
-        await type(lastMessage.content);
+        await type(lastMessage);
         await sleep(100);
         ignore = false;
       }
+
+      else if (lastThree === SET_SYSTEM_PROMPT_TRIGGER) {
+        ignore = true;
+        await backspace(3);
+        await sleep(100);
+        const message = stack.slice(0, -3).trim();
+        systemPromptOverride = message;
+        stack = "";
+        if (verbose) {
+          console.log(`System prompt set to: ${message}`);
+        }
+        await sleep(100);
+        ignore = false;
+
+      }
+    }
+  };
+
+  const handlePause = () => {
+    if (paused) {
+      paused = false;
+      ignore = false;
+      updateStatus(DEFAULT_STATUS_ICON);
+    } else {
+      paused = true;
+      ignore = true;
+      updateStatus(PAUSED_STATUS_ICON);
+    }
+    if (verbose) {
+      console.log(paused ? "Paused" : "Unpaused");
     }
   };
 
@@ -245,6 +271,12 @@ export const main = async ({
           if (keyMap[key]) {
             handleKey(keyMap[key]);
           } else {
+
+            // Pause functionality
+            if (key === 'PAGE DOWN') {
+              return handlePause();
+            }
+
             if (verbose) {
               console.log(`Unhandled key: ${key}`);
             }
@@ -257,11 +289,13 @@ export const main = async ({
   // Check clipboard every 500ms and add changes to stack
   const clipboard = monitorClipboard(500);
   clipboard.on("data", async (data) => {
-    if (verbose) {
-      console.log("Clipboard added to stack:");
-      console.log(data);
+    if (!paused) {
+      if (verbose) {
+        console.log("Clipboard added to stack:");
+        console.log(data);
+      }
+      stack += `\n${data}\n`;
     }
-    stack += `\n${data}\n`;
   });
 
   // Set status icon
@@ -270,7 +304,7 @@ export const main = async ({
   // Watch directory for images and run OCR
   if (ocrDirectory) {
     watch(ocrDirectory).on("data", async (filePath) => {
-      if (filePath.endsWith(".png")) {
+      if (!paused && filePath.endsWith(".png")) {
         const data = await ocr(filePath);
         stack += data;
         if (verbose) {

@@ -1,6 +1,6 @@
 {
   "name": "tripleg",
-  "version": "0.1.11",
+  "version": "0.1.15",
   "description": "",
   "main": "index.js",
   "type": "module",
@@ -22,7 +22,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.24.2",
+    "@anthropic-ai/sdk": "^0.24.3",
+    "@google/generative-ai": "^0.14.1",
     "chalk": "^4.1.2",
     "chokidar": "^3.6.0",
     "clipboardy": "^4.0.0",
@@ -30,9 +31,5 @@
     "node-global-key-listener": "^0.1.1",
     "openai": "^4.28.0",
     "robotjs": "^0.6.0"
-  },
-  "peerDependencies": {
-    "@anthropic-ai/sdk": "^0.24.2",
-    "@google/generative-ai": "^0.14.0"
   }
 }

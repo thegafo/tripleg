@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@anthropic-ai/sdk@^0.24.2":
-  version "0.24.2"
-  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.24.2.tgz#56defd51f84a2aa6738b34a2fa551b6ca387c41a"
-  integrity sha512-JVfQFfquMiRpnuCg/SdQC27B2XoYJOJPItPWKBcX7z8a/dxV2Pdk1Hz3bQTwPaJyMplsIlHKGyC3mf1BK2jWJw==
+"@anthropic-ai/sdk@^0.24.3":
+  version "0.24.3"
+  resolved "https://registry.yarnpkg.com/@anthropic-ai/sdk/-/sdk-0.24.3.tgz#5ac8fbb01bc1ab68d2a92ef124fd42b1cb94c837"
+  integrity sha512-916wJXO6T6k8R6BAAcLhLPv/pnLGy7YSEBZXZ1XTFbLcTZE8oTy3oDW9WJf9KKZwMvVcePIfoTSvzXHRcGxkQQ==
   dependencies:
     "@types/node" "^18.11.18"
     "@types/node-fetch" "^2.6.4"
@@ -16,10 +16,10 @@
     node-fetch "^2.6.7"
     web-streams-polyfill "^3.2.1"
 
-"@google/generative-ai@^0.14.0":
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/@google/generative-ai/-/generative-ai-0.14.0.tgz#e4af89a71d231bce2eb0a3f3b6caab4ebf0a737d"
-  integrity sha512-wNgIGEpInlVd98SapqvnQX8HQz0zM43U9NMvrbIMKQzz2pQm60pJTeHHlICTDcy/yZNLsvFQ/RfD+Ck9H8K7vw==
+"@google/generative-ai@^0.14.1":
+  version "0.14.1"
+  resolved "https://registry.yarnpkg.com/@google/generative-ai/-/generative-ai-0.14.1.tgz#a9dcdf0b929fb0fa8c072007d6461c1c3cfe1175"
+  integrity sha512-pevEyZCb0Oc+dYNlSberW8oZBm4ofeTD5wN01TowQMhTwdAbGAnJMtQzoklh6Blq2AKsx8Ox6FWa44KioZLZiA==
 
 "@types/node-fetch@^2.6.4":
   version "2.6.11"

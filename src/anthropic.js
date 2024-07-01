@@ -124,5 +124,5 @@ export const removeLastMessage = () => {
 };
 
 export const getLastMessage = () => {
-  return history[history.length - 1];
+  return history[history.length - 1].content.map((part) => part.type === 'text' ? part.text : '').join('');
 };
