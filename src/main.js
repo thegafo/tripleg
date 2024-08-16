@@ -38,7 +38,7 @@ export const main = async ({
   const RESET_TRIGGER = triggerKey.toUpperCase().repeat(3);
   const EXIT_TRIGGER = triggerKey + triggerKey.toUpperCase() + triggerKey;
   const OCR_TRIGGER = triggerKey + triggerKey + "x";
-  const REPEAT_TRIGGER = triggerKey + triggerKey + "r";
+  const REPEAT_TRIGGER = triggerKey + triggerKey + "R";
   const SET_SYSTEM_PROMPT_TRIGGER = triggerKey + triggerKey + "s";
 
   let stack = "";
