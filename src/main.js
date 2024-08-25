@@ -8,7 +8,6 @@ import { watch } from "./watch.js";
 import { ocr } from "./ocr/ocr.js";
 import { screenshot } from "./screenshot/screenshot.js";
 import { config as toolConfig, tools } from "./tools.js";
-import chalk from 'chalk';
 
 const DEFAULT_STATUS_ICON = "bolt.horizontal";
 const PROCESS_STATUS_ICON = "bolt.horizontal.fill";
@@ -203,7 +202,7 @@ export const main = async ({
         await backspace(3);
         await sleep(100);
         const lastMessage = getLastMessage();
-        await type(lastMessage);
+        await type(lastMessage.replace(/\n/g, '\r'));
         await sleep(100);
         ignore = false;
       }

@@ -1,5 +1,6 @@
 export const models = {
   openai: [
+    'gpt-4o-mini',
     'gpt-3.5-turbo',
     'gpt-3.5-turbo-0125',
     'gpt-3.5-turbo-1106',
@@ -23,6 +24,8 @@ export const models = {
     'claude-3-haiku-20240307',
   ],
   groq: [
+    'llama-3.1-70b-versatile',
+    'llama-3.1-8b-instant',
     'llama3-70b-8192',
     'llama3-8b-8192',
     'mixtral-8x7b-32768',

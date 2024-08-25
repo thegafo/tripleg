@@ -118,3 +118,29 @@ export const getConfig = (provider) => {
     return undefined;
   }
 }
+export const pricing = {
+  'openai': {
+    'gpt-4o-mini': {
+      inputPrice: 0.00015,
+      outputPrice: 0.0006
+    },
+    'gpt-4': {
+      inputPrice: 0.03,
+      outputPrice: 0.06
+    },
+    'gpt-4o': {
+      inputPrice: 0.005,
+      outputPrice: 0.015
+    },
+  }
+};
+
+export const getPricing = (provider, model, inputTokens, outputTokens) => {
+  const modelPricing = pricing[provider]?.[model];
+  if (!modelPricing) {
+    return 0;
+  }
+  const totalPrice =
+    (modelPricing.inputPrice * inputTokens / 1000) + (modelPricing.outputPrice * outputTokens / 1000);
+  return totalPrice;
+};

@@ -1,15 +1,18 @@
 import OpenAI from "openai";
 import EventEmitter from "events";
-import { getConfig } from "./utils.js";
+import { getConfig, getPricing, pricing } from "./utils.js";
+import chalk from 'chalk';
 
 let history = [];
 let stream;
+let inputTokens = 0;
+let outputTokens = 0;
 
 export function chat(
   systemPrompt = "",
   userPrompt = "",
   provider = "openai",
-  model = "gpt-3.5-turbo",
+  model = "gpt-4o-mini",
   tools = {},
   config = [],
   verbose = false,
@@ -28,6 +31,7 @@ export function chat(
       history.push({ role: "user", content: userPrompt });
     }
     try {
+      inputTokens += (systemPrompt.length + userPrompt.length) / 3;
       stream = await openai.chat.completions.create({
         model: model,
         messages: history,
@@ -86,17 +90,21 @@ export function chat(
               tool_call_id: toolCall.id,
               content: result,
             });
+            outputTokens += (result.length) / 3;
 
             if (verbose) {
               console.log(`Tool result: ${result}`);
             }
 
           } catch (err) {
+            const content = `Error executing tool: ${err.message}`
             history.push({
               role: "tool",
               tool_call_id: toolCall.id,
-              content: `Error executing tool: ${err.message}`,
+              content,
             });
+            outputTokens += (content.length) / 3;
+
             if (verbose) {
               console.log(`Error executing tool: ${err.message}`);
             }
@@ -105,7 +113,12 @@ export function chat(
         return chat(systemPrompt, "", provider, model, tools, config, verbose, dataEmitter);
       } else {
         history.push({ role: "assistant", content: result });
+        outputTokens += (result.length) / 3;
         dataEmitter.emit("close");
+      }
+      if (verbose) {
+        const price = getPricing(provider, model, inputTokens, outputTokens);
+        console.log(chalk.green(`$${price.toFixed(5)}`));
       }
     }
   }
@@ -119,6 +132,7 @@ export function chat(
   };
 
   main().catch((error) => {
+    console.log(error.message);
     console.log(error.error.message || error.status);
     process.exit();
   });
